@@ -12,5 +12,6 @@ export function handleBaseReverseClaimed(event: BaseReverseClaimedEvent): void {
 
   let domain = new Domain(event.params.node.toHex())
   domain.owner = account.id
+  domain.subdomainCount = 0
   domain.save()
 }
