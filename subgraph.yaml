@@ -1,7 +1,6 @@
 specVersion: 1.0.0
 indexerHints:
   prune: auto
-  maxRpcRequestsPerSecond: 10
 schema:
   file: ./schema.graphql
 dataSources:
