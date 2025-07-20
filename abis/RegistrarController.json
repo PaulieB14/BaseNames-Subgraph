@@ -3,6 +3,97 @@
     "anonymous": false,
     "inputs": [
       {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "discountKey",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "tuple",
+        "name": "details",
+        "type": "tuple",
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "discountPercentage",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "maxUses",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "usedCount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isActive",
+            "type": "bool"
+          }
+        ]
+      }
+    ],
+    "name": "DiscountUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "payee",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      }
+    ],
+    "name": "ETHPaymentProcessed",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "label",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "expires",
+        "type": "uint256"
+      }
+    ],
+    "name": "NameRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
         "indexed": false,
         "internalType": "string",
         "name": "name",
@@ -16,65 +107,70 @@
       },
       {
         "indexed": false,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "cost",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
         "internalType": "uint256",
         "name": "expires",
         "type": "uint256"
       }
     ],
-    "name": "NameRegistered",
+    "name": "NameRenewed",
     "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
+        "indexed": false,
         "internalType": "address",
-        "name": "owner",
+        "name": "newPaymentReceiver",
+        "type": "address"
+      }
+    ],
+    "name": "PaymentReceiverUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "newPrices",
+        "type": "address"
+      }
+    ],
+    "name": "PriceOracleUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "registrant",
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "discountKey",
+        "type": "bytes32"
       }
     ],
-    "name": "register",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    "name": "DiscountApplied",
+    "type": "event"
   },
   {
+    "anonymous": false,
     "inputs": [
       {
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "internalType": "uint256",
-        "name": "duration",
-        "type": "uint256"
+        "indexed": false,
+        "internalType": "address",
+        "name": "newReverseRegistrar",
+        "type": "address"
       }
     ],
-    "name": "renew",
-    "outputs": [],
-    "stateMutability": "payable",
-    "type": "function"
+    "name": "ReverseRegistrarUpdated",
+    "type": "event"
   }
-] 
+]

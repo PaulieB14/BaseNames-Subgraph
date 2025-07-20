@@ -40,17 +40,9 @@ type Account @entity {
   id: ID!
   domains: [Domain!]! @derivedFrom(field: "owner")
   registrations: [Registration!]! @derivedFrom(field: "registrant")
-  wrappedDomains: [WrappedDomain!]! @derivedFrom(field: "owner")
 }
 
-type WrappedDomain @entity {
-  id: ID!
-  domain: Domain!
-  expiryDate: BigInt!
-  fuses: BigInt!
-  owner: Account!
-  name: String
-}
+
 
 # Events
 type DomainEvent @entity(immutable: true) {

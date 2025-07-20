@@ -8,12 +8,12 @@ dataSources:
     name: Registry
     network: base
     source:
-      address: "0xb94704422c2a1e396835a571837aa5ae53285a95"
+      address: "0x1493b2567056c2181630115660963E13A8E32735"
       abi: Registry
-      startBlock: 17571480
+      startBlock: 17640000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       entities:
         - Domain
@@ -24,26 +24,24 @@ dataSources:
         - name: Registry
           file: ./abis/Registry.json
       eventHandlers:
-        - event: NewOwner(indexed bytes32,indexed bytes32,address)
+        - event: NewOwner(indexed bytes32,indexed address)
           handler: handleNewOwner
-        - event: NewResolver(indexed bytes32,address)
+        - event: NewResolver(indexed bytes32,indexed address)
           handler: handleNewResolver
         - event: NewTTL(indexed bytes32,uint64)
           handler: handleNewTTL
-        - event: Transfer(indexed bytes32,address)
-          handler: handleTransfer
       file: ./src/registry.ts
 
   - kind: ethereum
     name: BaseRegistrar
     network: base
     source:
-      address: "0x03c4738Ee98aE44591e1A4A4F3CaB6641d95DD9a"
+      address: "0xa0c70ec36c010b55e3c434d6c6ebeec50c705794"
       abi: BaseRegistrar
-      startBlock: 17571480
+      startBlock: 17640000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       entities:
         - Registration
@@ -55,24 +53,22 @@ dataSources:
         - name: BaseRegistrar
           file: ./abis/BaseRegistrar.json
       eventHandlers:
-        - event: NameRegistered(string,indexed bytes32,address,uint256,uint256)
+        - event: NameRegistered(indexed uint256,indexed address,uint256)
           handler: handleNameRegistered
-        - event: NameRenewed(string,indexed bytes32,uint256,uint256)
+        - event: NameRenewed(indexed uint256,uint256)
           handler: handleNameRenewed
-        - event: Transfer(indexed address,indexed address,indexed uint256)
-          handler: handleNameTransferred
       file: ./src/registrar.ts
 
   - kind: ethereum
     name: RegistrarController
     network: base
     source:
-      address: "0x4cCb0BB02FCABA27e82a56646E81d8c5bC4119a5"
+      address: "0x49ae3cc2e3aa768b1e5654f5d3c6002144a59581"
       abi: RegistrarController
-      startBlock: 17571480
+      startBlock: 17640000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       entities:
         - Registration
@@ -81,81 +77,11 @@ dataSources:
         - name: RegistrarController
           file: ./abis/RegistrarController.json
       eventHandlers:
-        - event: NameRegistered(string,indexed bytes32,address,uint256,uint256)
+        - event: NameRegistered(string,indexed bytes32,indexed address,uint256)
           handler: handleControllerNameRegistered
       file: ./src/controller.ts
 
-  - kind: ethereum
-    name: NameWrapper
-    network: base
-    source:
-      address: "0xBD9bab0A97b2Cc6Aa28b9C902d7C656B121D5F9F"
-      abi: NameWrapper
-      startBlock: 17571480
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - WrappedDomain
-        - Domain
-        - Account
-      abis:
-        - name: NameWrapper
-          file: ./abis/NameWrapper.json
-      eventHandlers:
-        - event: TransferSingle(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleWrappedDomainTransfer
-        - event: TransferBatch(indexed address,indexed address,indexed address,uint256[],uint256[])
-          handler: handleWrappedDomainBatchTransfer
-      file: ./src/wrapper.ts
 
-  - kind: ethereum
-    name: L2Resolver
-    network: base
-    source:
-      address: "0xC6d566A56A1aFf6508b41f6c90ff131615583BCD"
-      abi: L2Resolver
-      startBlock: 17571480
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - Resolver
-        - AddrChanged
-        - MulticoinAddrChanged
-        - AbiChanged
-        - PubkeyChanged
-        - TextChanged
-        - ContenthashChanged
-        - InterfaceChanged
-        - AuthorisationChanged
-        - VersionChanged
-        - ResolverEvent
-      abis:
-        - name: L2Resolver
-          file: ./abis/L2Resolver.json
-      eventHandlers:
-        - event: AddrChanged(indexed bytes32,address)
-          handler: handleAddrChanged
-        - event: AddressChanged(indexed bytes32,uint256,bytes)
-          handler: handleMulticoinAddrChanged
-        - event: ABIChanged(indexed bytes32,uint256)
-          handler: handleAbiChanged
-        - event: PubkeyChanged(indexed bytes32,bytes32,bytes32)
-          handler: handlePubkeyChanged
-        - event: TextChanged(indexed bytes32,indexed string,string)
-          handler: handleTextChanged
-        - event: ContenthashChanged(indexed bytes32,bytes)
-          handler: handleContenthashChanged
-        - event: InterfaceChanged(indexed bytes32,indexed bytes4,address)
-          handler: handleInterfaceChanged
-        - event: AuthorisationChanged(indexed bytes32,indexed address,indexed address,bool)
-          handler: handleAuthorisationChanged
-        - event: VersionChanged(indexed bytes32,uint64)
-          handler: handleVersionChanged
-      file: ./src/resolver.ts
 
   - kind: ethereum
     name: ReverseRegistrar
@@ -163,10 +89,10 @@ dataSources:
     source:
       address: "0x79ea96012eea67a83431f1701b3dff7e37f9e282"
       abi: ReverseRegistrar
-      startBlock: 17571480
+      startBlock: 17640000
     mapping:
       kind: ethereum/events
-      apiVersion: 0.0.7
+      apiVersion: 0.0.8
       language: wasm/assemblyscript
       entities:
         - Domain
@@ -176,6 +102,6 @@ dataSources:
         - name: ReverseRegistrar
           file: ./abis/ReverseRegistrar.json
       eventHandlers:
-        - event: ReverseClaimed(indexed address,indexed bytes32)
+        - event: BaseReverseClaimed(indexed address,indexed bytes32)
           handler: handleReverseClaimed
       file: ./src/reverse.ts

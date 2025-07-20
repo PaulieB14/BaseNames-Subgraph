@@ -1,73 +1,44 @@
 import {
   NameRegistered as NameRegisteredEvent,
-  NameRenewed as NameRenewedEvent,
-  Transfer as TransferEvent
+  NameRenewed as NameRenewedEvent
 } from "../generated/BaseRegistrar/BaseRegistrar"
 import {
   Registration,
   NameRegistered,
-  NameRenewed,
-  NameTransferred,
-  RegistrationEvent,
-  Domain,
-  Account
+  NameRenewed
 } from "../generated/schema"
-import { createEventID, createRegistrationID, createAccountID, createDomainID } from "./utils"
+import { createRegistrationID, createDomainID } from "./utils"
 
 export function handleNameRegistered(event: NameRegisteredEvent): void {
-  let account = new Account(createAccountID(event.params.owner))
-  account.save()
-
-  let registration = new Registration(createRegistrationID(event.params.label))
-  registration.domain = createDomainID(event.params.label)
+  let registration = new Registration(createRegistrationID(event.params.id.toHexString()))
+  registration.domain = createDomainID(event.params.id.toHexString())
   registration.registrationDate = event.block.timestamp
   registration.expiryDate = event.params.expires
-  registration.cost = event.params.cost
-  registration.registrant = account.id
-  registration.labelName = event.params.name
+  registration.registrant = event.params.owner.toHexString()
   registration.save()
 
-  let nameRegistered = new NameRegistered(createEventID(event))
+  let nameRegistered = new NameRegistered(createRegistrationID(event.params.id.toHexString()))
   nameRegistered.registration = registration.id
   nameRegistered.blockNumber = event.block.number
-  nameRegistered.blockTimestamp = event.block.timestamp
-  nameRegistered.transactionHash = event.transaction.hash
-  nameRegistered.registrant = account.id
+  nameRegistered.transactionID = event.transaction.hash.toHexString()
+  nameRegistered.registrant = event.params.owner.toHexString()
   nameRegistered.expiryDate = event.params.expires
   nameRegistered.save()
 }
 
 export function handleNameRenewed(event: NameRenewedEvent): void {
-  let registration = Registration.load(createRegistrationID(event.params.label))
+  let registration = Registration.load(createRegistrationID(event.params.id.toHexString()))
   if (registration != null) {
     registration.expiryDate = event.params.expires
     registration.save()
-
-    let nameRenewed = new NameRenewed(createEventID(event))
-    nameRenewed.registration = registration.id
-    nameRenewed.blockNumber = event.block.number
-    nameRenewed.blockTimestamp = event.block.timestamp
-    nameRenewed.transactionHash = event.transaction.hash
-    nameRenewed.expiryDate = event.params.expires
-    nameRenewed.save()
   }
-}
 
-export function handleNameTransferred(event: TransferEvent): void {
-  let account = new Account(createAccountID(event.params.to))
-  account.save()
-
-  let registration = Registration.load(event.params.tokenId.toString())
+  let nameRenewed = new NameRenewed(createRegistrationID(event.params.id.toHexString()))
   if (registration != null) {
-    registration.registrant = account.id
-    registration.save()
-
-    let nameTransferred = new NameTransferred(createEventID(event))
-    nameTransferred.registration = registration.id
-    nameTransferred.blockNumber = event.block.number
-    nameTransferred.blockTimestamp = event.block.timestamp
-    nameTransferred.transactionHash = event.transaction.hash
-    nameTransferred.newOwner = account.id
-    nameTransferred.save()
+    nameRenewed.registration = registration.id
   }
-} 
+  nameRenewed.blockNumber = event.block.number
+  nameRenewed.transactionID = event.transaction.hash.toHexString()
+  nameRenewed.expiryDate = event.params.expires
+  nameRenewed.save()
+}

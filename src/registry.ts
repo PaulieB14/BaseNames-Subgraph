@@ -7,28 +7,24 @@ import {
 import {
   Domain,
   Account,
-  Resolver,
-  DomainEvent
+  Resolver
 } from "../generated/schema"
-import { createEventID, createDomainID, createResolverID, createAccountID } from "./utils"
+import { createDomainID, createResolverID, createAccountID } from "./utils"
 
 export function handleNewOwner(event: NewOwnerEvent): void {
   let account = new Account(createAccountID(event.params.owner))
   account.save()
 
-  let domain = new Domain(createDomainID(event.params.node))
-  if (domain.labelName == null) {
-    domain.labelName = event.params.label.toHexString()
+  let domain = Domain.load(createDomainID(event.params.node))
+  if (domain == null) {
+    domain = new Domain(createDomainID(event.params.node))
+    domain.subdomainCount = 0
+    domain.isMigrated = true
+    domain.createdAt = event.block.timestamp
+    domain.name = "" // Root domain has no name
   }
   domain.owner = account.id
-  domain.parent = createDomainID(event.params.label)
   domain.save()
-
-  let parent = Domain.load(createDomainID(event.params.label))
-  if (parent != null) {
-    parent.subdomainCount = parent.subdomainCount + 1
-    parent.save()
-  }
 }
 
 export function handleNewResolver(event: NewResolverEvent): void {
@@ -55,10 +51,12 @@ export function handleNewTTL(event: NewTTLEvent): void {
 }
 
 export function handleTransfer(event: TransferEvent): void {
-  let account = new Account(createAccountID(event.params.owner))
+  let account = new Account(createAccountID(event.params.to))
   account.save()
 
-  let domain = Domain.load(createDomainID(event.params.node))
+  // Convert tokenId to bytes for domain ID
+  let domainId = event.params.tokenId.toHexString()
+  let domain = Domain.load(domainId)
   if (domain != null) {
     domain.owner = account.id
     domain.save()
