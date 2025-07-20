@@ -21,17 +21,22 @@ import {
   InterfaceChanged,
   AuthorisationChanged,
   VersionChanged,
-  ResolverEvent
+  ResolverEvent,
+  Account
 } from "../generated/schema"
-import { createEventID, createResolverID } from "./utils"
+import { createEventID } from "./utils"
 
 export function handleAddrChanged(event: AddrChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    resolver.addr = event.params.a.toHexString()
+    // Create or load the account
+    let account = new Account(event.params.a.toHex())
+    account.save()
+    
+    resolver.addr = account.id
     resolver.save()
 
-    let addrChanged = new AddrChanged(createEventID(event))
+    let addrChanged = new AddrChanged(createEventID(event.transaction.hash, event.logIndex))
     addrChanged.resolver = resolver.id
     addrChanged.blockNumber = event.block.number
     addrChanged.blockTimestamp = event.block.timestamp
@@ -42,9 +47,9 @@ export function handleAddrChanged(event: AddrChangedEvent): void {
 }
 
 export function handleMulticoinAddrChanged(event: AddressChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let multicoinAddrChanged = new MulticoinAddrChanged(createEventID(event))
+    let multicoinAddrChanged = new MulticoinAddrChanged(createEventID(event.transaction.hash, event.logIndex))
     multicoinAddrChanged.resolver = resolver.id
     multicoinAddrChanged.blockNumber = event.block.number
     multicoinAddrChanged.blockTimestamp = event.block.timestamp
@@ -56,9 +61,9 @@ export function handleMulticoinAddrChanged(event: AddressChangedEvent): void {
 }
 
 export function handleAbiChanged(event: ABIChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let abiChanged = new AbiChanged(createEventID(event))
+    let abiChanged = new AbiChanged(createEventID(event.transaction.hash, event.logIndex))
     abiChanged.resolver = resolver.id
     abiChanged.blockNumber = event.block.number
     abiChanged.blockTimestamp = event.block.timestamp
@@ -69,9 +74,9 @@ export function handleAbiChanged(event: ABIChangedEvent): void {
 }
 
 export function handlePubkeyChanged(event: PubkeyChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let pubkeyChanged = new PubkeyChanged(createEventID(event))
+    let pubkeyChanged = new PubkeyChanged(createEventID(event.transaction.hash, event.logIndex))
     pubkeyChanged.resolver = resolver.id
     pubkeyChanged.blockNumber = event.block.number
     pubkeyChanged.blockTimestamp = event.block.timestamp
@@ -83,9 +88,9 @@ export function handlePubkeyChanged(event: PubkeyChangedEvent): void {
 }
 
 export function handleTextChanged(event: TextChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let textChanged = new TextChanged(createEventID(event))
+    let textChanged = new TextChanged(createEventID(event.transaction.hash, event.logIndex))
     textChanged.resolver = resolver.id
     textChanged.blockNumber = event.block.number
     textChanged.blockTimestamp = event.block.timestamp
@@ -97,12 +102,12 @@ export function handleTextChanged(event: TextChangedEvent): void {
 }
 
 export function handleContenthashChanged(event: ContenthashChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
     resolver.contentHash = event.params.hash
     resolver.save()
 
-    let contenthashChanged = new ContenthashChanged(createEventID(event))
+    let contenthashChanged = new ContenthashChanged(createEventID(event.transaction.hash, event.logIndex))
     contenthashChanged.resolver = resolver.id
     contenthashChanged.blockNumber = event.block.number
     contenthashChanged.blockTimestamp = event.block.timestamp
@@ -113,9 +118,9 @@ export function handleContenthashChanged(event: ContenthashChangedEvent): void {
 }
 
 export function handleInterfaceChanged(event: InterfaceChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let interfaceChanged = new InterfaceChanged(createEventID(event))
+    let interfaceChanged = new InterfaceChanged(createEventID(event.transaction.hash, event.logIndex))
     interfaceChanged.resolver = resolver.id
     interfaceChanged.blockNumber = event.block.number
     interfaceChanged.blockTimestamp = event.block.timestamp
@@ -127,9 +132,9 @@ export function handleInterfaceChanged(event: InterfaceChangedEvent): void {
 }
 
 export function handleAuthorisationChanged(event: AuthorisationChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let authorisationChanged = new AuthorisationChanged(createEventID(event))
+    let authorisationChanged = new AuthorisationChanged(createEventID(event.transaction.hash, event.logIndex))
     authorisationChanged.resolver = resolver.id
     authorisationChanged.blockNumber = event.block.number
     authorisationChanged.blockTimestamp = event.block.timestamp
@@ -142,9 +147,9 @@ export function handleAuthorisationChanged(event: AuthorisationChangedEvent): vo
 }
 
 export function handleVersionChanged(event: VersionChangedEvent): void {
-  let resolver = Resolver.load(createResolverID(event.params.node, event.address))
+  let resolver = Resolver.load(event.address.toHex())
   if (resolver != null) {
-    let versionChanged = new VersionChanged(createEventID(event))
+    let versionChanged = new VersionChanged(createEventID(event.transaction.hash, event.logIndex))
     versionChanged.resolver = resolver.id
     versionChanged.blockNumber = event.block.number
     versionChanged.blockTimestamp = event.block.timestamp

@@ -47,6 +47,8 @@ export function handleNewResolver(event: NewResolverEvent): void {
   domain.resolver = resolver.id
   domain.save()
 
+  // Note: Resolver events will be handled when resolvers are set up
+
   let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
   domainEvent.domain = domain.id
   domainEvent.blockNumber = event.block.number

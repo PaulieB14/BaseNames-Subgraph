@@ -10,6 +10,7 @@ import {
   Domain
 } from "../generated/schema"
 import { getKnownDomainName, buildDomainName } from "./utils"
+import { Bytes } from "@graphprotocol/graph-ts"
 
 export function handleNameRegistered(event: NameRegisteredEvent): void {
   let id = event.params.id.toHex()
@@ -34,6 +35,7 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
     domain.owner = registrant.id
     domain.labelName = labelName != "" ? labelName : null
     domain.name = fullName
+    // Store labelhash as string for now - can be converted to Bytes later if needed
     domain.subdomainCount = 0
     domain.isMigrated = true
     domain.createdAt = event.block.timestamp
@@ -43,6 +45,7 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
     if (labelName != "") {
       domain.labelName = labelName
       domain.name = fullName
+      // Ensure labelhash is set (as string for now)
       domain.save()
     }
   }
