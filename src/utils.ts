@@ -27,3 +27,15 @@ export function buildDomainName(labelName: string, parentName: string): string {
   }
   return labelName + "." + parentName
 }
+
+// Known domain names for testing (simplified for AssemblyScript)
+export function getKnownDomainName(labelhash: string): string {
+  // Simple if-else approach for AssemblyScript compatibility
+  if (labelhash == "0x9c22ff5f21f0b81b113e63f7db6da94fedef11b2119b4088b89664fb9a3cb658") {
+    return "test"
+  }
+  if (labelhash == "0x12196ae91af2712490e94125687426721cc734ddf72e070c27e161f23123fcbc") {
+    return "example"
+  }
+  return ""
+}

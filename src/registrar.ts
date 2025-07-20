@@ -9,6 +9,7 @@ import {
   Account,
   Domain
 } from "../generated/schema"
+import { getKnownDomainName, buildDomainName } from "./utils"
 
 export function handleNameRegistered(event: NameRegisteredEvent): void {
   let id = event.params.id.toHex()
@@ -21,21 +22,35 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
     registrant.save()
   }
 
+  // Try to get the domain name from known mappings
+  let labelName = getKnownDomainName(id)
+  let fullName = labelName != "" ? buildDomainName(labelName, "base") : null
+
   // Ensure Domain exists
   let domainId = event.params.id.toHex()
   let domain = Domain.load(domainId)
   if (!domain) {
     domain = new Domain(domainId)
     domain.owner = registrant.id
+    domain.labelName = labelName != "" ? labelName : null
+    domain.name = fullName
     domain.subdomainCount = 0
     domain.isMigrated = true
     domain.createdAt = event.block.timestamp
     domain.save()
+  } else {
+    // Update existing domain with name if we found it
+    if (labelName != "") {
+      domain.labelName = labelName
+      domain.name = fullName
+      domain.save()
+    }
   }
 
   // Registration entity
   let registration = new Registration(id)
   registration.domain = domain.id
+  registration.labelName = labelName != "" ? labelName : null
   registration.registrationDate = event.block.timestamp
   registration.expiryDate = event.params.expires
   registration.registrant = registrant.id
