@@ -103,5 +103,5 @@ dataSources:
           file: ./abis/ReverseRegistrar.json
       eventHandlers:
         - event: BaseReverseClaimed(indexed address,indexed bytes32)
-          handler: handleReverseClaimed
+          handler: handleBaseReverseClaimed
       file: ./src/reverse.ts

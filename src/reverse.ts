@@ -1,18 +1,16 @@
 import {
-  ReverseClaimed as ReverseClaimedEvent
+  BaseReverseClaimed as BaseReverseClaimedEvent
 } from "../generated/ReverseRegistrar/ReverseRegistrar"
 import {
   Domain,
-  Account,
-  DomainEvent
+  Account
 } from "../generated/schema"
-import { createEventID, createAccountID, createDomainID } from "./utils"
 
-export function handleReverseClaimed(event: ReverseClaimedEvent): void {
-  let account = new Account(createAccountID(event.params.addr))
+export function handleBaseReverseClaimed(event: BaseReverseClaimedEvent): void {
+  let account = new Account(event.params.addr.toHex())
   account.save()
 
-  let domain = new Domain(createDomainID(event.params.node))
+  let domain = new Domain(event.params.node.toHex())
   domain.owner = account.id
   domain.save()
-} 
+}

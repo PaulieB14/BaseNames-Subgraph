@@ -9,15 +9,15 @@ import {
   Account,
   Resolver
 } from "../generated/schema"
-import { createDomainID, createResolverID, createAccountID } from "./utils"
+import { createResolverID, createAccountID } from "./utils"
 
 export function handleNewOwner(event: NewOwnerEvent): void {
   let account = new Account(createAccountID(event.params.owner))
   account.save()
 
-  let domain = Domain.load(createDomainID(event.params.node))
+  let domain = Domain.load(event.params.node.toHex())
   if (domain == null) {
-    domain = new Domain(createDomainID(event.params.node))
+    domain = new Domain(event.params.node.toHex())
     domain.subdomainCount = 0
     domain.isMigrated = true
     domain.createdAt = event.block.timestamp
@@ -28,7 +28,7 @@ export function handleNewOwner(event: NewOwnerEvent): void {
 }
 
 export function handleNewResolver(event: NewResolverEvent): void {
-  let domain = Domain.load(createDomainID(event.params.node))
+  let domain = Domain.load(event.params.node.toHex())
   if (domain != null) {
     domain.resolver = createResolverID(event.params.node, event.params.resolver)
     domain.save()
@@ -43,7 +43,7 @@ export function handleNewResolver(event: NewResolverEvent): void {
 }
 
 export function handleNewTTL(event: NewTTLEvent): void {
-  let domain = Domain.load(createDomainID(event.params.node))
+  let domain = Domain.load(event.params.node.toHex())
   if (domain != null) {
     domain.ttl = event.params.ttl
     domain.save()
