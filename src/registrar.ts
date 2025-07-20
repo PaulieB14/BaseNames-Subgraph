@@ -26,6 +26,9 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
   let domain = Domain.load(domainId)
   if (!domain) {
     domain = new Domain(domainId)
+    domain.subdomainCount = 0
+    domain.isMigrated = true
+    domain.createdAt = event.block.timestamp
     domain.save()
   }
 
