@@ -1,46 +1,203 @@
-type ApprovalForAll @entity(immutable: true) {
-  id: Bytes!
-  owner: Bytes! # address
-  operator: Bytes! # address
-  approved: Boolean! # bool
+type Domain @entity {
+  id: ID!
+  name: String
+  labelName: String
+  labelhash: Bytes
+  parent: Domain
+  subdomains: [Domain!]! @derivedFrom(field: "parent")
+  subdomainCount: Int!
+  owner: Account!
+  resolver: Resolver
+  ttl: BigInt
+  isMigrated: Boolean!
+  createdAt: BigInt!
+  events: [DomainEvent!]! @derivedFrom(field: "domain")
+}
+
+type Registration @entity {
+  id: ID!
+  domain: Domain!
+  registrationDate: BigInt!
+  expiryDate: BigInt!
+  cost: BigInt
+  registrant: Account!
+  labelName: String
+  events: [RegistrationEvent!]! @derivedFrom(field: "registration")
+}
+
+type Resolver @entity {
+  id: ID!
+  domain: Domain
+  address: Bytes!
+  addr: Account
+  contentHash: Bytes
+  texts: [String!]
+  coinTypes: [BigInt!]
+  events: [ResolverEvent!]! @derivedFrom(field: "resolver")
+}
+
+type Account @entity {
+  id: ID!
+  domains: [Domain!]! @derivedFrom(field: "owner")
+  registrations: [Registration!]! @derivedFrom(field: "registrant")
+  wrappedDomains: [WrappedDomain!]! @derivedFrom(field: "owner")
+}
+
+type WrappedDomain @entity {
+  id: ID!
+  domain: Domain!
+  expiryDate: BigInt!
+  fuses: BigInt!
+  owner: Account!
+  name: String
+}
+
+# Events
+type DomainEvent @entity(immutable: true) {
+  id: ID!
+  domain: Domain!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type NewOwner @entity(immutable: true) {
-  id: Bytes!
-  node: Bytes! # bytes32
-  label: Bytes! # bytes32
-  owner: Bytes! # address
+type RegistrationEvent @entity(immutable: true) {
+  id: ID!
+  registration: Registration!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type NewResolver @entity(immutable: true) {
-  id: Bytes!
-  node: Bytes! # bytes32
-  resolver: Bytes! # address
+type ResolverEvent @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type NewTTL @entity(immutable: true) {
-  id: Bytes!
-  node: Bytes! # bytes32
-  ttl: BigInt! # uint64
+# Specific event types
+type NameRegistered @entity(immutable: true) {
+  id: ID!
+  registration: Registration!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  registrant: Account!
+  expiryDate: BigInt!
 }
 
-type Transfer @entity(immutable: true) {
-  id: Bytes!
-  node: Bytes! # bytes32
-  owner: Bytes! # address
+type NameRenewed @entity(immutable: true) {
+  id: ID!
+  registration: Registration!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+  expiryDate: BigInt!
+}
+
+type NameTransferred @entity(immutable: true) {
+  id: ID!
+  registration: Registration!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  newOwner: Account!
+}
+
+type AddrChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  a: Bytes!
+}
+
+type MulticoinAddrChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  coinType: BigInt!
+  newAddress: Bytes!
+}
+
+type NameChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  name: String!
+}
+
+type AbiChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  contentType: BigInt!
+}
+
+type PubkeyChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  x: Bytes!
+  y: Bytes!
+}
+
+type TextChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  indexedKey: String!
+  key: String!
+}
+
+type ContenthashChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  hash: Bytes!
+}
+
+type InterfaceChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  interfaceID: Bytes!
+  implementer: Bytes!
+}
+
+type AuthorisationChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  owner: Bytes!
+  target: Bytes!
+  isAuthorized: Boolean!
+}
+
+type VersionChanged @entity(immutable: true) {
+  id: ID!
+  resolver: Resolver!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+  version: BigInt!
 }
