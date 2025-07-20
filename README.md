@@ -72,12 +72,12 @@ graph build
 ⚠️ **IMPORTANT**: The contract addresses in `subgraph.yaml` are currently placeholder addresses. You need to replace them with the actual Base Name Service contract addresses.
 
 Current contract addresses:
-- Registry: `0x03c4738Ee98aE44591e1A4A4F3CaB6641d95DD9a` ✅
-- BaseRegistrar: `0x0000000000000000000000000000000000000001` ⏳
-- RegistrarController: `0x0000000000000000000000000000000000000002` ⏳
-- NameWrapper: `0x0000000000000000000000000000000000000003` ⏳
-- L2Resolver: `0x0000000000000000000000000000000000000004` ⏳
-- ReverseRegistrar: `0x0000000000000000000000000000000000000005` ⏳
+- Registry: `0xb94704422c2a1e396835a571837aa5ae53285a95` ✅
+- BaseRegistrar: `0x03c4738Ee98aE44591e1A4A4F3CaB6641d95DD9a` ✅
+- RegistrarController: `0x4cCb0BB02FCABA27e82a56646E81d8c5bC4119a5` ✅
+- NameWrapper: `0xBD9bab0A97b2Cc6Aa28b9C902d7C656B121D5F9F` ✅
+- L2Resolver: `0xC6d566A56A1aFf6508b41f6c90ff131615583BCD` ✅
+- ReverseRegistrar: `0x79ea96012eea67a83431f1701b3dff7e37f9e282` ✅
 
 ### Finding Correct Addresses
 1. Check [basescan.org](https://basescan.org) for Base Name Service contracts
