@@ -40,8 +40,17 @@ type Account @entity {
   id: ID!
   domains: [Domain!]! @derivedFrom(field: "owner")
   registrations: [Registration!]! @derivedFrom(field: "registrant")
+  reverseRegistrations: [ReverseRegistration!]! @derivedFrom(field: "owner")
 }
 
+type ReverseRegistration @entity {
+  id: ID!
+  domain: Domain!
+  owner: Account!
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
 
 
 # Events

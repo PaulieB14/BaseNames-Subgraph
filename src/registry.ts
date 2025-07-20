@@ -1,64 +1,76 @@
 import {
   NewOwner as NewOwnerEvent,
   NewResolver as NewResolverEvent,
-  NewTTL as NewTTLEvent,
-  Transfer as TransferEvent
+  NewTTL as NewTTLEvent
 } from "../generated/Registry/Registry"
 import {
   Domain,
   Account,
-  Resolver
+  Resolver,
+  DomainEvent
 } from "../generated/schema"
-import { createResolverID, createAccountID } from "./utils"
+import { createEventID } from "./utils"
 
 export function handleNewOwner(event: NewOwnerEvent): void {
-  let account = new Account(createAccountID(event.params.owner))
+  let account = new Account(event.params.owner.toHex())
   account.save()
 
+  let domain = new Domain(event.params.node.toHex())
+  domain.owner = account.id
+  domain.subdomainCount = 0
+  domain.isMigrated = true
+  domain.createdAt = event.block.timestamp
+  domain.save()
+
+  let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
+  domainEvent.domain = domain.id
+  domainEvent.blockNumber = event.block.number
+  domainEvent.blockTimestamp = event.block.timestamp
+  domainEvent.transactionHash = event.transaction.hash
+  domainEvent.save()
+}
+
+export function handleNewResolver(event: NewResolverEvent): void {
   let domain = Domain.load(event.params.node.toHex())
   if (domain == null) {
     domain = new Domain(event.params.node.toHex())
     domain.subdomainCount = 0
     domain.isMigrated = true
     domain.createdAt = event.block.timestamp
-    domain.name = "" // Root domain has no name
-  }
-  domain.owner = account.id
-  domain.save()
-}
-
-export function handleNewResolver(event: NewResolverEvent): void {
-  let domain = Domain.load(event.params.node.toHex())
-  if (domain != null) {
-    domain.resolver = createResolverID(event.params.node, event.params.resolver)
-    domain.save()
   }
 
-  let resolver = new Resolver(createResolverID(event.params.node, event.params.resolver))
-  if (domain != null) {
-    resolver.domain = domain.id
-  }
+  let resolver = new Resolver(event.params.resolver.toHex())
+  resolver.domain = domain.id
   resolver.address = event.params.resolver
   resolver.save()
+
+  domain.resolver = resolver.id
+  domain.save()
+
+  let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
+  domainEvent.domain = domain.id
+  domainEvent.blockNumber = event.block.number
+  domainEvent.blockTimestamp = event.block.timestamp
+  domainEvent.transactionHash = event.transaction.hash
+  domainEvent.save()
 }
 
 export function handleNewTTL(event: NewTTLEvent): void {
   let domain = Domain.load(event.params.node.toHex())
-  if (domain != null) {
-    domain.ttl = event.params.ttl
-    domain.save()
+  if (domain == null) {
+    domain = new Domain(event.params.node.toHex())
+    domain.subdomainCount = 0
+    domain.isMigrated = true
+    domain.createdAt = event.block.timestamp
   }
-}
 
-export function handleTransfer(event: TransferEvent): void {
-  let account = new Account(createAccountID(event.params.to))
-  account.save()
+  domain.ttl = event.params.ttl
+  domain.save()
 
-  // Convert tokenId to bytes for domain ID
-  let domainId = event.params.tokenId.toHexString()
-  let domain = Domain.load(domainId)
-  if (domain != null) {
-    domain.owner = account.id
-    domain.save()
-  }
+  let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
+  domainEvent.domain = domain.id
+  domainEvent.blockNumber = event.block.number
+  domainEvent.blockTimestamp = event.block.timestamp
+  domainEvent.transactionHash = event.transaction.hash
+  domainEvent.save()
 }
