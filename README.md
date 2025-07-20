@@ -4,7 +4,8 @@ A Graph Protocol subgraph for indexing Base Name Service contracts on Base netwo
 
 ## Overview
 
-This subgraph tracks domain registrations, transfers, and resolver events for Base Name Service, similar to how the ENS subgraph works for Ethereum mainnet.
+This subgraph tracks domain registrations, transfers, and resolver events for Base Name Service, similar to 
+how the ENS subgraph works for Ethereum mainnet.
 
 ## Project Structure
 
@@ -14,14 +15,12 @@ base-names/
 │   ├── Registry.json
 │   ├── BaseRegistrar.json
 │   ├── RegistrarController.json
-│   ├── NameWrapper.json
 │   ├── L2Resolver.json
 │   └── ReverseRegistrar.json
 ├── src/                     # Mapping files
 │   ├── registry.ts         # Registry contract events
 │   ├── registrar.ts        # Registrar contract events
 │   ├── controller.ts       # Controller contract events
-│   ├── wrapper.ts          # NameWrapper contract events
 │   ├── resolver.ts         # Resolver contract events
 │   ├── reverse.ts          # Reverse registrar events
 │   └── utils.ts            # Utility functions
@@ -37,7 +36,6 @@ base-names/
 - **Account**: Represents an address that owns domains or registrations
 - **Registration**: Represents a domain registration with expiry and cost
 - **Resolver**: Represents a resolver contract with address records and metadata
-- **WrappedDomain**: Represents ERC-1155 wrapped domains
 
 ### Event Entities
 - **NameRegistered**: Domain registration events
@@ -68,22 +66,16 @@ graph build
 
 ## Configuration
 
-### Contract Addresses
-⚠️ **IMPORTANT**: The contract addresses in `subgraph.yaml` are currently placeholder addresses. You need to replace them with the actual Base Name Service contract addresses.
+### Contract Addresses (Base Mainnet)
+The subgraph is configured with the official Base Name Service contract addresses:
 
-Current contract addresses:
-- Registry: `0xb94704422c2a1e396835a571837aa5ae53285a95` ✅
-- BaseRegistrar: `0x03c4738Ee98aE44591e1A4A4F3CaB6641d95DD9a` ✅
-- RegistrarController: `0x4cCb0BB02FCABA27e82a56646E81d8c5bC4119a5` ✅
-- NameWrapper: `0xBD9bab0A97b2Cc6Aa28b9C902d7C656B121D5F9F` ✅
-- L2Resolver: `0xC6d566A56A1aFf6508b41f6c90ff131615583BCD` ✅
-- ReverseRegistrar: `0x79ea96012eea67a83431f1701b3dff7e37f9e282` ✅
-
-### Finding Correct Addresses
-1. Check [basescan.org](https://basescan.org) for Base Name Service contracts
-2. Look for official Base Name Service documentation
-3. Check if Base Name Service is actually deployed on Base
-4. Verify contract addresses are on Base network, not Ethereum mainnet
+- **Registry**: `0xb94704422c2a1e396835a571837aa5ae53285a95`
+- **BaseRegistrar**: `0x03c4738ee98ae44591e1a4a4f3cab6641d95dd9a`
+- **RegistrarController**: `0x4cCb0BB02FCABA27e82a56646E81d8c5bC4119a5`
+- **Launch Price Oracle**: `0xd53b558e1f07289acedf028d226974abba258312`
+- **Price Oracle**: `0x508CFE43aa84b8048cB6d39037cE0dc96d8aDc75`
+- **ReverseRegistrar**: `0x79ea96012eea67a83431f1701b3dff7e37f9e282`
+- **L2Resolver**: `0xC6d566A56A1aFf6508b41f6c90ff131615583BCD`
 
 ## Deployment
 
@@ -104,6 +96,14 @@ graph auth https://api.thegraph.com/deploy/ <access-token>
 # Deploy
 graph deploy --product hosted-service <username>/base-names
 ```
+
+## Live Deployment
+
+The subgraph is currently deployed and live:
+
+- **Studio URL**: https://thegraph.com/studio/subgraph/base-names
+- **Query Endpoint**: https://api.studio.thegraph.com/query/111767/base-names/0.11
+- **Current Version**: 0.11
 
 ## Example Queries
 
@@ -207,4 +207,5 @@ MIT License
 - [Graph Protocol Documentation](https://thegraph.com/docs/)
 - [ENS Subgraph Reference](https://github.com/ensdomains/ens-subgraph)
 - [Base Network Documentation](https://docs.base.org/)
-- [Base Block Explorer](https://basescan.org/) 
+- [Base Block Explorer](https://basescan.org/)
+- [Base Name Service](https://basenames.domains/)

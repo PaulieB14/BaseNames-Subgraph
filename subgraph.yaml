@@ -8,7 +8,7 @@ dataSources:
     name: Registry
     network: base
     source:
-      address: "0x1493b2567056c2181630115660963E13A8E32735"
+      address: "0xb94704422c2a1e396835a571837aa5ae53285a95"
       abi: Registry
       startBlock: 17640000
     mapping:
@@ -36,7 +36,7 @@ dataSources:
     name: BaseRegistrar
     network: base
     source:
-      address: "0xa0c70ec36c010b55e3c434d6c6ebeec50c705794"
+      address: "0x03c4738ee98ae44591e1a4a4f3cab6641d95dd9a"
       abi: BaseRegistrar
       startBlock: 17640000
     mapping:
@@ -63,7 +63,7 @@ dataSources:
     name: RegistrarController
     network: base
     source:
-      address: "0x49ae3cc2e3aa768b1e5654f5d3c6002144a59581"
+      address: "0x4cCb0BB02FCABA27e82a56646E81d8c5bC4119a5"
       abi: RegistrarController
       startBlock: 17640000
     mapping:
