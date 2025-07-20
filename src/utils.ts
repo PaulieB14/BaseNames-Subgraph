@@ -19,3 +19,11 @@ export function createEventID(event: Bytes, logIndex: BigInt): string {
 export function createRegistrationID(id: BigInt): string {
   return id.toHex();
 }
+
+// Function to build full domain name
+export function buildDomainName(labelName: string, parentName: string): string {
+  if (parentName == "") {
+    return labelName
+  }
+  return labelName + "." + parentName
+}
