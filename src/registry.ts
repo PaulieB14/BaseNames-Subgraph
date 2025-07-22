@@ -17,6 +17,9 @@ export function handleNewOwner(event: NewOwnerEvent): void {
 
   let domain = new Domain(event.params.node.toHex())
   domain.owner = account.id
+  // For registry domains, we don't have direct access to labelhash
+  // The node is the namehash, and labelhash would need to be derived
+  // For now, we'll leave it null and it can be populated later if needed
   domain.subdomainCount = 0
   domain.isMigrated = true
   domain.createdAt = event.block.timestamp
@@ -33,10 +36,10 @@ export function handleNewOwner(event: NewOwnerEvent): void {
 export function handleNewResolver(event: NewResolverEvent): void {
   let domain = Domain.load(event.params.node.toHex())
   if (domain == null) {
-    domain = new Domain(event.params.node.toHex())
-    domain.subdomainCount = 0
-    domain.isMigrated = true
-    domain.createdAt = event.block.timestamp
+    // Don't create a new domain here since we don't have the owner information
+    // The domain should be created by other handlers (NewOwner, NameRegistered, etc.)
+    // that have access to the owner information
+    return
   }
 
   let resolver = new Resolver(event.params.resolver.toHex())
@@ -60,10 +63,10 @@ export function handleNewResolver(event: NewResolverEvent): void {
 export function handleNewTTL(event: NewTTLEvent): void {
   let domain = Domain.load(event.params.node.toHex())
   if (domain == null) {
-    domain = new Domain(event.params.node.toHex())
-    domain.subdomainCount = 0
-    domain.isMigrated = true
-    domain.createdAt = event.block.timestamp
+    // Don't create a new domain here since we don't have the owner information
+    // The domain should be created by other handlers (NewOwner, NameRegistered, etc.)
+    // that have access to the owner information
+    return
   }
 
   domain.ttl = event.params.ttl
