@@ -9,12 +9,12 @@ import {
   Account,
   Domain
 } from "../generated/schema"
-import { getKnownDomainName, buildDomainName } from "./utils"
+import { getKnownDomainName, buildDomainName, generateReadableName } from "./utils"
 import { Bytes } from "@graphprotocol/graph-ts"
 
 export function handleNameRegistered(event: NameRegisteredEvent): void {
-  let id = event.params.id.toHex()
-  let registrantId = event.params.owner.toHex()
+  const id = event.params.id.toHex()
+  const registrantId = event.params.owner.toHex()
 
   // Ensure Account exists
   let registrant = Account.load(registrantId)
@@ -23,17 +23,17 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
     registrant.save()
   }
 
-  // Try to get the domain name from known mappings
-  let labelName = getKnownDomainName(id)
-  let fullName = labelName != "" ? buildDomainName(labelName, "base") : null
+  // Get the domain name from known mappings or generate a readable name
+  const labelName = getKnownDomainName(id)
+  const fullName = labelName != "" ? buildDomainName(labelName, "base") : generateReadableName(id, id) + ".base"
 
   // Ensure Domain exists
-  let domainId = event.params.id.toHex()
+  const domainId = event.params.id.toHex()
   let domain = Domain.load(domainId)
   if (!domain) {
     domain = new Domain(domainId)
     domain.owner = registrant.id
-    domain.labelName = labelName != "" ? labelName : null
+    domain.labelName = labelName != "" ? labelName : generateReadableName(id, id)
     domain.name = fullName
     // Convert BigInt to Bytes for labelhash
     domain.labelhash = Bytes.fromByteArray(Bytes.fromBigInt(event.params.id))
@@ -43,8 +43,8 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
     domain.save()
   } else {
     // Update existing domain with name if we found it
-    if (labelName != "") {
-      domain.labelName = labelName
+    if (labelName != "" || domain.name == null) {
+      domain.labelName = labelName != "" ? labelName : generateReadableName(id, id)
       domain.name = fullName
       // Ensure labelhash is set
       domain.labelhash = Bytes.fromByteArray(Bytes.fromBigInt(event.params.id))
@@ -53,16 +53,16 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
   }
 
   // Registration entity
-  let registration = new Registration(id)
+  const registration = new Registration(id)
   registration.domain = domain.id
-  registration.labelName = labelName != "" ? labelName : null
+  registration.labelName = labelName != "" ? labelName : generateReadableName(id, id)
   registration.registrationDate = event.block.timestamp
   registration.expiryDate = event.params.expires
   registration.registrant = registrant.id
   registration.save()
 
   // NameRegistered event entity
-  let nameRegistered = new NameRegistered(id)
+  const nameRegistered = new NameRegistered(id)
   nameRegistered.registration = registration.id
   nameRegistered.blockNumber = event.block.number
   nameRegistered.blockTimestamp = event.block.timestamp
@@ -73,14 +73,14 @@ export function handleNameRegistered(event: NameRegisteredEvent): void {
 }
 
 export function handleNameRenewed(event: NameRenewedEvent): void {
-  let id = event.params.id.toHex()
-  let registration = Registration.load(id)
+  const id = event.params.id.toHex()
+  const registration = Registration.load(id)
   if (registration != null) {
     registration.expiryDate = event.params.expires
     registration.save()
 
     // Only create NameRenewed event if registration exists
-    let nameRenewed = new NameRenewed(id)
+    const nameRenewed = new NameRenewed(id)
     nameRenewed.registration = registration.id
     nameRenewed.blockNumber = event.block.number
     nameRenewed.blockTimestamp = event.block.timestamp

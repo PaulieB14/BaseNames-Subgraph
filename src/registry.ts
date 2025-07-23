@@ -12,10 +12,10 @@ import {
 import { createEventID } from "./utils"
 
 export function handleNewOwner(event: NewOwnerEvent): void {
-  let account = new Account(event.params.owner.toHex())
+  const account = new Account(event.params.owner.toHex())
   account.save()
 
-  let domain = new Domain(event.params.node.toHex())
+  const domain = new Domain(event.params.node.toHex())
   domain.owner = account.id
   // For registry domains, we don't have direct access to labelhash
   // The node is the namehash, and labelhash would need to be derived
@@ -25,7 +25,7 @@ export function handleNewOwner(event: NewOwnerEvent): void {
   domain.createdAt = event.block.timestamp
   domain.save()
 
-  let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
+  const domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
   domainEvent.domain = domain.id
   domainEvent.blockNumber = event.block.number
   domainEvent.blockTimestamp = event.block.timestamp
@@ -34,7 +34,7 @@ export function handleNewOwner(event: NewOwnerEvent): void {
 }
 
 export function handleNewResolver(event: NewResolverEvent): void {
-  let domain = Domain.load(event.params.node.toHex())
+  const domain = Domain.load(event.params.node.toHex())
   if (domain == null) {
     // Don't create a new domain here since we don't have the owner information
     // The domain should be created by other handlers (NewOwner, NameRegistered, etc.)
@@ -42,7 +42,7 @@ export function handleNewResolver(event: NewResolverEvent): void {
     return
   }
 
-  let resolver = new Resolver(event.params.resolver.toHex())
+  const resolver = new Resolver(event.params.resolver.toHex())
   resolver.domain = domain.id
   resolver.address = event.params.resolver
   resolver.save()
@@ -52,7 +52,7 @@ export function handleNewResolver(event: NewResolverEvent): void {
 
   // Note: Resolver events will be handled when resolvers are set up
 
-  let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
+  const domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
   domainEvent.domain = domain.id
   domainEvent.blockNumber = event.block.number
   domainEvent.blockTimestamp = event.block.timestamp
@@ -61,7 +61,7 @@ export function handleNewResolver(event: NewResolverEvent): void {
 }
 
 export function handleNewTTL(event: NewTTLEvent): void {
-  let domain = Domain.load(event.params.node.toHex())
+  const domain = Domain.load(event.params.node.toHex())
   if (domain == null) {
     // Don't create a new domain here since we don't have the owner information
     // The domain should be created by other handlers (NewOwner, NameRegistered, etc.)
@@ -72,7 +72,7 @@ export function handleNewTTL(event: NewTTLEvent): void {
   domain.ttl = event.params.ttl
   domain.save()
 
-  let domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
+  const domainEvent = new DomainEvent(createEventID(event.transaction.hash, event.logIndex))
   domainEvent.domain = domain.id
   domainEvent.blockNumber = event.block.number
   domainEvent.blockTimestamp = event.block.timestamp
